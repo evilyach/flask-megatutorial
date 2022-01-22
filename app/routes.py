@@ -7,6 +7,7 @@ from flask import (
 from flask_login import (
     current_user,
     login_user,
+    logout_user,
 )
 
 from app import app
@@ -57,3 +58,9 @@ def login():
         title="Sign In",
         form=form
     )
+
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for("index"))
