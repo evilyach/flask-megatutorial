@@ -42,9 +42,6 @@ def enable_logging_to_file():
     
     app.logger.addHandler(file_handler)
 
-    app.logger.setLevel(logging.INFO)
-    app.logger.info("Microblog startup")
-
 
 if not app.debug:
     if app.config["MAIL_SERVER"]:
