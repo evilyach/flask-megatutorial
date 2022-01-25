@@ -54,16 +54,8 @@ def index():
         flash("Your post is now live!")
         return redirect(url_for("index"))
 
-    posts = [
-        {
-            "author": {"username": "Alexey"},
-            "body": "Beautiful day in Domodedovo!",
-        },
-        {
-            "author": {"username": "Grigory"},
-            "body": "The Green Elephant movie was so cool!",
-        },
-    ]
+    posts = current_user.followed_posts().all()
+
     return render_template(
         "index.html",
         title="Home",
