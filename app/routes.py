@@ -140,15 +140,43 @@ def register():
 
 @app.route("/user/<username>")
 @login_required
-def user(username):
+def user(username: str) -> str:
+    """This is a profile page API
+    
+    Parameters:
+        username - username whose profile you want to get
+
+    ---
+
+    `url_gen` is a lambda function to provide right 
+    
+    Basically, if "next" provided, the output is
+    `url_for("user", username=user.username, page=posts.next_num) if posts.has_next else None`
+    And for "prev", output is
+    `url_for("user", username=user.username, page=posts.prev_num) if posts.has_prev else None`
+    """
+
+    page = request.args.get("page", default=1, type=int)
+
     user = User.query.filter_by(username=username).first_or_404()
-    posts = [
-        {"author": user, "body": "Test post #1"},
-        {"author": user, "body": "Test post #2"},
-    ]
+    posts = user.posts.order_by(Post.timestamp.desc()).paginate(
+        page, app.config["POSTS_PER_PAGE"], False
+    )
+
     form = EmptyForm()
 
-    return render_template("user.html", user=user, posts=posts, form=form)
+    url_gen = lambda direction: url_for(
+        "user", username=user.username, page=getattr(posts, f"{direction}_num")
+    ) if getattr(posts, f"has_{direction}") else None
+
+    return render_template(
+        "user.html",
+        form=form,
+        posts=posts.items,
+        user=user,
+        next_url=url_gen("next"),
+        prev_url=url_gen("prev"),
+    )
 
 
 @app.route("/edit_profile", methods=["GET", "POST"])
