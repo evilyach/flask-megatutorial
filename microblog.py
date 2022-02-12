@@ -1,7 +1,6 @@
 from app import (
     app,
     db,
-    login
 )
 
 
@@ -9,5 +8,4 @@ from app import (
 def make_shell_context():
     return {
         "db": db,
-        "login": login,
     }

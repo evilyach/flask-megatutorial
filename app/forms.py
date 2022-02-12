@@ -1,4 +1,3 @@
-from curses.ascii import EM
 from app.models import User
 
 from flask_wtf import FlaskForm
