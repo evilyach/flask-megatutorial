@@ -13,7 +13,7 @@ from flask_login import (
     login_user,
     logout_user,
 )
-from flask_mail import send_password_reset_email
+from app.email import send_password_reset_email
 from werkzeug.urls import url_parse
 
 from app import (
