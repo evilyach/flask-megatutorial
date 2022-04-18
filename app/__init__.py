@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_babel import Babel
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
 from flask_mail import Mail
@@ -20,5 +21,6 @@ login = LoginManager(app)
 login.login_view = "login"
 mail = Mail(app)
 moment = Moment(app)
+babel = Babel(app)
 
 from app import routes, models, errors, log
