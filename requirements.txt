@@ -1,3 +1,4 @@
+black
 email-validator
 Flask
 Flask-Babel
