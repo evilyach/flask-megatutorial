@@ -15,13 +15,14 @@ from flask_login import (
     login_user,
     logout_user,
 )
-from app.email import send_password_reset_email
+from langdetect import detect, LangDetectException
 from werkzeug.urls import url_parse
 
 from app import (
     app,
     db,
 )
+from app.email import send_password_reset_email
 from app.forms import (
     EditProfileForm,
     EmptyForm,
@@ -49,11 +50,25 @@ def before_request():
 @app.route("/", methods=["GET", "POST"])
 @app.route("/index", methods=["GET", "POST"])
 @login_required
-def index():
+def index() -> str:
+    """Route for displaying index page and sending posts.
+
+    GET request allows to see paginated index page.
+    POST request allows to create a post and send it to database.
+
+    Returns:
+        str: HTML template
+    """
+
     form = PostForm()
 
     if form.validate_on_submit():
-        post = Post(body=form.post.data, author=current_user)
+        try:
+            language = detect(form.post.data)
+        except LangDetectException:
+            language = ""
+
+        post = Post(body=form.post.data, author=current_user, language=language)
 
         db.session.add(post)
         db.session.commit()
