@@ -148,19 +148,13 @@ def register():
 @app.route("/user/<username>")
 @login_required
 def user(username: str) -> str:
-    """This is a profile page API
+    """Route for displaying user profile.
 
-    Parameters:
-        username - username whose profile you want to get
+    Args:
+        username (str)
 
-    ---
-
-    `url_gen` is a lambda function to provide right
-
-    Basically, if "next" provided, the output is
-    `url_for("user", username=user.username, page=posts.next_num) if posts.has_next else None`
-    And for "prev", output is
-    `url_for("user", username=user.username, page=posts.prev_num) if posts.has_prev else None`
+    Returns:
+        str: HTML template
     """
 
     page = request.args.get("page", default=1, type=int)
@@ -172,11 +166,14 @@ def user(username: str) -> str:
 
     form = EmptyForm()
 
-    url_gen = (
-        lambda direction: url_for(
-            "user", username=user.username, page=getattr(posts, f"{direction}_num")
-        )
-        if getattr(posts, f"has_{direction}")
+    next_url = (
+        url_for("user", username=user.username, page=posts.next_num)
+        if posts.has_next
+        else None
+    )
+    prev_url = (
+        url_for("user", username=user.username, page=posts.prev_num)
+        if posts.has_prev
         else None
     )
 
@@ -185,8 +182,8 @@ def user(username: str) -> str:
         form=form,
         posts=posts.items,
         user=user,
-        next_url=url_gen("next"),
-        prev_url=url_gen("prev"),
+        next_url=next_url,
+        prev_url=prev_url,
     )
 
 
