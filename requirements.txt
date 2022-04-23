@@ -13,3 +13,4 @@ jinja2==3.0.3
 langdetect
 PyJWT
 python-dotenv
+requests

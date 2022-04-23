@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2022-04-18 12:18+0300\n"
+"POT-Creation-Date: 2022-04-23 09:11+0300\n"
 "PO-Revision-Date: 2022-04-18 12:19+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -39,7 +39,7 @@ msgstr "Пароль"
 msgid "Remember me"
 msgstr "Запомнить меня"
 
-#: app/forms.py:29 app/routes.py:118 app/templates/login.html:5
+#: app/forms.py:29 app/routes.py:135 app/templates/login.html:5
 msgid "Sign In"
 msgstr "Войти"
 
@@ -51,13 +51,9 @@ msgstr "Электронная почта"
 msgid "Repeat Password"
 msgstr "Повторите пароль"
 
-#: app/forms.py:39
+#: app/forms.py:39 app/routes.py:162 app/templates/register.html:5
 msgid "Register"
 msgstr "Зарегистрироваться"
-
-#: app/routes.py:145 app/templates/register.html:5
-msgid "Register"
-msgstr "Регистрация"
 
 #: app/forms.py:46 app/forms.py:69
 msgid "Please use a different username."
@@ -83,68 +79,80 @@ msgstr "Скажите что-нибудь"
 msgid "Request Password Reset"
 msgstr "Запросить сброс пароля"
 
-#: app/routes.py:61
+#: app/routes.py:78
 msgid "Your post is now live!"
 msgstr "Ваш пост теперь доступен!"
 
-#: app/routes.py:72 app/templates/base.html:21
+#: app/routes.py:89 app/templates/base.html:27
 msgid "Home"
-msgstr "Дом"
+msgstr "Главная"
 
-#: app/routes.py:90 app/templates/base.html:22
+#: app/routes.py:107 app/templates/base.html:28
 msgid "Explore"
 msgstr "Исследовать"
 
-#: app/routes.py:107
+#: app/routes.py:124
 msgid "Invalid username or password"
 msgstr "Неправильные имя пользователя или пароль"
 
-#: app/routes.py:141
+#: app/routes.py:158
 msgid "Congratulations, you are now a registered user!"
 msgstr "Поздравляем, теперь вы зарегистрированы!"
 
-#: app/routes.py:204
+#: app/routes.py:218
 msgid "Your changes have been saved."
 msgstr "Ваши изменения были сохранены."
 
-#: app/routes.py:210 app/templates/edit_profile.html:5
+#: app/routes.py:224 app/templates/edit_profile.html:5
 msgid "Edit Profile"
 msgstr "Изменить профиль"
 
-#: app/routes.py:222 app/routes.py:247
+#: app/routes.py:236 app/routes.py:261
 #, python-format
 msgid "User %(username)s not found."
 msgstr "Пользователь %(username)s не найден."
 
-#: app/routes.py:226
+#: app/routes.py:240
 msgid "You can't follow yourself!"
 msgstr "Вы не можете отписаться от себя!"
 
-#: app/routes.py:232
+#: app/routes.py:246
 #, python-format
 msgid "You are now following %(username)s!"
 msgstr "Теперь вы подписаны на %(username)s!"
 
-#: app/routes.py:251
+#: app/routes.py:265
 msgid "You can't unfollow yourself!"
 msgstr "Вы не можете отписаться от себя!"
 
-#: app/routes.py:257
+#: app/routes.py:271
 #, python-format
 msgid "You are now not following %(username)s."
 msgstr "Теперь вы отписаны от %(username)s."
 
-#: app/routes.py:276
+#: app/routes.py:290
 msgid "Check your email for the instructions to reset your password"
 msgstr "Проверьте вашу электронную почту, чтобы сбросить пароль"
 
-#: app/routes.py:280
+#: app/routes.py:294
 msgid "Reset Password"
 msgstr "Сбросить пароль"
 
-#: app/routes.py:300
+#: app/routes.py:314
 msgid "Your password has been reset."
 msgstr "Ваш пароль был сброшен."
+
+#: app/translate.py:21
+msgid "Yandex Translate Token is not set up"
+msgstr "Токен Яндекс.Переводчика не настроен"
+
+#: app/translate.py:25
+msgid "Yandex Translate Folder ID is not set up"
+msgstr "Каталог Яндекс.Переводчика не настроен"
+
+#: app/translate.py:46
+msgid "Could not translate text"
+msgstr "Не удалось перевести текст"
 
 #: app/templates/404.html:4
 msgid "Not Found"
@@ -162,26 +170,34 @@ msgstr "Произошла неожиданная ошибка"
 msgid "The administrator has been notified. Sorry for the inconvenience!"
 msgstr "Администратору сообщили об ошибке. Просим прощения за неудобство!"
 
-#: app/templates/_post.html:14
+#: app/templates/_post.html:15
 #, python-format
 msgid "%(username)s said %(when)s"
 msgstr "%(username)s сказал(а) %(when)s"
+
+#: app/templates/_post.html:28
+msgid "Translate"
+msgstr "Перевести"
 
 #: app/templates/base.html:4
 msgid "Welcome to Microblog"
 msgstr "Добро пожаловать в Microblog"
 
-#: app/templates/base.html:26
+#: app/templates/base.html:32
 msgid "Login"
 msgstr "Вход"
 
-#: app/templates/base.html:28
+#: app/templates/base.html:34
 msgid "Profile"
 msgstr "Профиль"
 
-#: app/templates/base.html:29
+#: app/templates/base.html:35
 msgid "Logout"
 msgstr "Выход"
+
+#: app/templates/base.html:73
+msgid "Could not contact translation server."
+msgstr "Не удалось воспользоваться сервисом перевода."
 
 #: app/templates/index.html:5
 #, python-format

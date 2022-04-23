@@ -21,3 +21,6 @@ class Config:
     POSTS_PER_PAGE = 25
 
     LANGUAGES = ["en", "ru"]
+
+    YANDEX_TRANSLATE_TOKEN = os.environ.get("YANDEX_TRANSLATE_TOKEN")
+    YANDEX_TRANSLATE_FOLDER_ID = os.environ.get("YANDEX_TRANSLATE_FOLDER_ID")

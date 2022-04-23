@@ -3,6 +3,7 @@ from datetime import datetime
 from flask import (
     flash,
     g,
+    jsonify,
     redirect,
     render_template,
     request,
@@ -36,6 +37,7 @@ from app.models import (
     Post,
     User,
 )
+from app.translate import translate
 
 
 @app.before_request
@@ -313,3 +315,17 @@ def reset_password(token: str):
         return redirect(url_for("login"))
 
     return render_template("reset_password.html", form=form)
+
+
+@app.route("/translate", methods=["POST"])
+@login_required
+def translate_text():
+    return jsonify(
+        {
+            "text": translate(
+                request.form["text"],
+                request.form["source_language"],
+                request.form["target_language"],
+            )
+        }
+    )
