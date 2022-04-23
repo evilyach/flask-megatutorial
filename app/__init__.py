@@ -29,5 +29,8 @@ babel = Babel(app)
 def get_locale():
     return request.accept_languages.best_match(app.config["LANGUAGES"])
 
+from app.errors import errors_bp
+app.register_blueprint(errors_bp)
+
 
 from app import cli, errors, log, models, routes
