@@ -22,37 +22,6 @@ class EmptyForm(FlaskForm):
     submit = SubmitField("Submit")
 
 
-class LoginForm(FlaskForm):
-    username = StringField(_l("Username"), validators=[DataRequired()])
-    password = PasswordField(_l("Password"), validators=[DataRequired()])
-    remember_me = BooleanField(_l("Remember me"))
-    submit = SubmitField(_l("Sign In"))
-
-
-class RegistrationForm(FlaskForm):
-    username = StringField(_l("Username"), validators=[DataRequired()])
-    email = StringField(_l("Email"), validators=[DataRequired(), Email()])
-    password = PasswordField(_l("Password"), validators=[DataRequired()])
-    password_repeat = PasswordField(
-        _l("Repeat Password"), validators=[DataRequired(), EqualTo("password")]
-    )
-    submit = SubmitField(_l("Register"))
-
-    def validate_username(self, username):
-        """Custom username validator."""
-
-        user = User.query.filter_by(username=username.data).first()
-        if user is not None:
-            raise ValidationError(_("Please use a different username."))
-
-    def validate_email(self, email):
-        """Custom email validator."""
-
-        user = User.query.filter_by(email=email.data).first()
-        if user is not None:
-            raise ValidationError(_("Please use a different email address."))
-
-
 class EditProfileForm(FlaskForm):
     username = StringField(_l("Username"), validators=[DataRequired()])
     about_me = TextAreaField(_l("About me"), validators=[Length(min=0, max=140)])
@@ -74,16 +43,3 @@ class PostForm(FlaskForm):
         _l("Say something"), validators=[DataRequired(), Length(min=1, max=140)]
     )
     submit = SubmitField(_l("Submit"))
-
-
-class ResetPasswordRequestForm(FlaskForm):
-    email = StringField(_l("Email"), validators=[DataRequired(), Email()])
-    submit = SubmitField(_l("Submit"))
-
-
-class ResetPasswordForm(FlaskForm):
-    password = PasswordField(_l("Password"), validators=[DataRequired()])
-    password_repeat = PasswordField(
-        _l("Repeat Password"), validators=[DataRequired(), EqualTo("password")]
-    )
-    submit = SubmitField(_l("Request Password Reset"))
