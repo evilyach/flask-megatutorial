@@ -3,6 +3,7 @@ from datetime import datetime
 from flask import (
     flash,
     g,
+    jsonify,
     redirect,
     render_template,
     request,
@@ -15,13 +16,14 @@ from flask_login import (
     login_user,
     logout_user,
 )
-from app.email import send_password_reset_email
+from langdetect import detect, LangDetectException
 from werkzeug.urls import url_parse
 
 from app import (
     app,
     db,
 )
+from app.email import send_password_reset_email
 from app.forms import (
     EditProfileForm,
     EmptyForm,
@@ -35,6 +37,7 @@ from app.models import (
     Post,
     User,
 )
+from app.translate import translate
 
 
 @app.before_request
@@ -49,11 +52,25 @@ def before_request():
 @app.route("/", methods=["GET", "POST"])
 @app.route("/index", methods=["GET", "POST"])
 @login_required
-def index():
+def index() -> str:
+    """Route for displaying index page and sending posts.
+
+    GET request allows to see paginated index page.
+    POST request allows to create a post and send it to database.
+
+    Returns:
+        str: HTML template
+    """
+
     form = PostForm()
 
     if form.validate_on_submit():
-        post = Post(body=form.post.data, author=current_user)
+        try:
+            language = detect(form.post.data)
+        except LangDetectException:
+            language = ""
+
+        post = Post(body=form.post.data, author=current_user, language=language)
 
         db.session.add(post)
         db.session.commit()
@@ -148,19 +165,13 @@ def register():
 @app.route("/user/<username>")
 @login_required
 def user(username: str) -> str:
-    """This is a profile page API
+    """Route for displaying user profile.
 
-    Parameters:
-        username - username whose profile you want to get
+    Args:
+        username (str)
 
-    ---
-
-    `url_gen` is a lambda function to provide right
-
-    Basically, if "next" provided, the output is
-    `url_for("user", username=user.username, page=posts.next_num) if posts.has_next else None`
-    And for "prev", output is
-    `url_for("user", username=user.username, page=posts.prev_num) if posts.has_prev else None`
+    Returns:
+        str: HTML template
     """
 
     page = request.args.get("page", default=1, type=int)
@@ -172,11 +183,14 @@ def user(username: str) -> str:
 
     form = EmptyForm()
 
-    url_gen = (
-        lambda direction: url_for(
-            "user", username=user.username, page=getattr(posts, f"{direction}_num")
-        )
-        if getattr(posts, f"has_{direction}")
+    next_url = (
+        url_for("user", username=user.username, page=posts.next_num)
+        if posts.has_next
+        else None
+    )
+    prev_url = (
+        url_for("user", username=user.username, page=posts.prev_num)
+        if posts.has_prev
         else None
     )
 
@@ -185,8 +199,8 @@ def user(username: str) -> str:
         form=form,
         posts=posts.items,
         user=user,
-        next_url=url_gen("next"),
-        prev_url=url_gen("prev"),
+        next_url=next_url,
+        prev_url=prev_url,
     )
 
 
@@ -301,3 +315,17 @@ def reset_password(token: str):
         return redirect(url_for("login"))
 
     return render_template("reset_password.html", form=form)
+
+
+@app.route("/translate", methods=["POST"])
+@login_required
+def translate_text():
+    return jsonify(
+        {
+            "text": translate(
+                request.form["text"],
+                request.form["source_language"],
+                request.form["target_language"],
+            )
+        }
+    )

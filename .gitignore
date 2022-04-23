@@ -2,5 +2,6 @@
 **/__pycache__
 **/messages.mo
 *.db
+.flaskenv
 .env
 messages.pot
