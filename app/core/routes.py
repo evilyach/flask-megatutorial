@@ -1,46 +1,19 @@
 from datetime import datetime
 
-from flask import (
-    flash,
-    g,
-    jsonify,
-    redirect,
-    render_template,
-    request,
-    url_for,
-)
+from flask import (current_app, flash, g, jsonify, redirect, render_template,
+                   request, url_for)
 from flask_babel import _, get_locale
-from flask_login import (
-    current_user,
-    login_required,
-    login_user,
-    logout_user,
-)
-from langdetect import detect, LangDetectException
-from werkzeug.urls import url_parse
+from flask_login import current_user, login_required
+from langdetect import LangDetectException, detect
 
-from app import (
-    app,
-    db,
-)
-from app.auth.email import send_password_reset_email
-from app.forms import (
-    EditProfileForm,
-    EmptyForm,
-    LoginForm,
-    PostForm,
-    RegistrationForm,
-    ResetPasswordForm,
-    ResetPasswordRequestForm,
-)
-from app.models import (
-    Post,
-    User,
-)
+from app import db
+from app.core import core_bp
+from app.core.forms import EditProfileForm, EmptyForm, PostForm
+from app.models import Post, User
 from app.translate import translate
 
 
-@app.before_request
+@core_bp.before_request
 def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
@@ -49,8 +22,8 @@ def before_request():
     g.locale = str(get_locale())
 
 
-@app.route("/", methods=["GET", "POST"])
-@app.route("/index", methods=["GET", "POST"])
+@core_bp.route("/", methods=["GET", "POST"])
+@core_bp.route("/index", methods=["GET", "POST"])
 @login_required
 def index() -> str:
     """Route for displaying index page and sending posts.
@@ -81,7 +54,7 @@ def index() -> str:
     page = request.args.get("page", default=1, type=int)
 
     posts = current_user.followed_posts().paginate(
-        page, app.config["POSTS_PER_PAGE"], False
+        page, current_app.config["POSTS_PER_PAGE"], False
     )
 
     return render_template(
@@ -94,12 +67,12 @@ def index() -> str:
     )
 
 
-@app.route("/explore")
+@core_bp.route("/explore")
 @login_required
 def explore():
     page = request.args.get("page", default=1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(
-        page, app.config["POSTS_PER_PAGE"], False
+        page, current_app.config["POSTS_PER_PAGE"], False
     )
 
     return render_template(
@@ -111,7 +84,7 @@ def explore():
     )
 
 
-@app.route("/user/<username>")
+@core_bp.route("/user/<username>")
 @login_required
 def user(username: str) -> str:
     """Route for displaying user profile.
@@ -127,7 +100,7 @@ def user(username: str) -> str:
 
     user = User.query.filter_by(username=username).first_or_404()
     posts = user.posts.order_by(Post.timestamp.desc()).paginate(
-        page, app.config["POSTS_PER_PAGE"], False
+        page, current_app.config["POSTS_PER_PAGE"], False
     )
 
     form = EmptyForm()
@@ -153,7 +126,7 @@ def user(username: str) -> str:
     )
 
 
-@app.route("/edit_profile", methods=["GET", "POST"])
+@core_bp.route("/edit_profile", methods=["GET", "POST"])
 @login_required
 def edit_profile():
     form = EditProfileForm(current_user.username)
@@ -173,7 +146,7 @@ def edit_profile():
     return render_template("edit_profile.html", title=_("Edit Profile"), form=form)
 
 
-@app.route("/follow/<username>", methods=["POST"])
+@core_bp.route("/follow/<username>", methods=["POST"])
 @login_required
 def follow(username):
     form = EmptyForm()
@@ -198,7 +171,7 @@ def follow(username):
         return redirect(url_for("index"))
 
 
-@app.route("/unfollow/<username>", methods=["POST"])
+@core_bp.route("/unfollow/<username>", methods=["POST"])
 @login_required
 def unfollow(username):
     form = EmptyForm()
@@ -223,7 +196,7 @@ def unfollow(username):
         return redirect(url_for("index"))
 
 
-@app.route("/translate", methods=["POST"])
+@core_bp.route("/translate", methods=["POST"])
 @login_required
 def translate_text():
     return jsonify(

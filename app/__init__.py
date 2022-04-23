@@ -6,6 +6,8 @@ from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
+from app import core
+from app.core import routes
 
 from config import Config
 
@@ -29,8 +31,12 @@ babel = Babel(app)
 def get_locale():
     return request.accept_languages.best_match(app.config["LANGUAGES"])
 
+from app.auth import auth_bp
+app.register_blueprint(auth_bp, url_prefix='/auth')
 from app.errors import errors_bp
 app.register_blueprint(errors_bp)
+from app.core import core_bp
+app.register_blueprint(core_bp, url_prefix='/core')
 
 
-from app import cli, errors, log, models, routes
+from app import cli, log, models

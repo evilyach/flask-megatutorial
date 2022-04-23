@@ -14,7 +14,7 @@ from app.models import User
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("main.index"))
+        return redirect(url_for("core.index"))
 
     form = LoginForm()
 
@@ -28,7 +28,7 @@ def login():
 
         next = request.args.get("next")
         if not next or url_parse(next).netloc != "":
-            next = url_for("main.index")
+            next = url_for("core.index")
 
         return redirect(next)
 
@@ -38,13 +38,13 @@ def login():
 @auth_bp.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for("main.index"))
+    return redirect(url_for("core.index"))
 
 
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for("main.index"))
+        return redirect(url_for("core.index"))
 
     form = RegistrationForm()
 
@@ -65,7 +65,7 @@ def register():
 @auth_bp.route("/reset_password_request", methods=["GET", "POST"])
 def reset_password_request():
     if current_user.is_authenticated:
-        return redirect(url_for("main.index"))
+        return redirect(url_for("core.index"))
 
     form = ResetPasswordRequestForm()
 
@@ -86,11 +86,11 @@ def reset_password_request():
 @auth_bp.route("/reset_password/<token>", methods=["GET", "POST"])
 def reset_password(token: str):
     if current_user.is_authenticated:
-        return redirect(url_for("main.index"))
+        return redirect(url_for("core.index"))
 
     user = User.verify_reset_password_token(token)
     if not user:
-        return redirect(url_for("main.index"))
+        return redirect(url_for("core.index"))
 
     form = ResetPasswordForm()
 
