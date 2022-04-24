@@ -1,14 +1,17 @@
 import logging
-from logging.handlers import (
-    RotatingFileHandler,
-    SMTPHandler,
-)
 import os
+from logging.handlers import RotatingFileHandler, SMTPHandler
 
-from app import app
+from flask import Flask
 
 
-def enable_logging_to_mail():
+def enable_logging_to_mail(app: Flask) -> None:
+    """Enable logging in email messages.
+
+    Args:
+        app (Flask): application object
+    """
+
     auth = None
     if app.config["MAIL_USERNAME"] and app.config["MAIL_PASSWORD"]:
         auth = (app.config["MAIL_USERNAME"], app.config["MAIL_PASSWORD"])
@@ -23,27 +26,26 @@ def enable_logging_to_mail():
         toaddrs=app.config["ADMINS"],
         subject="Microblog Failure",
         credentials=auth,
-        secure=secure
+        secure=secure,
     )
     mail_handler.setLevel(logging.ERROR)
 
     app.logger.addHandler(mail_handler)
 
-def enable_logging_to_file():
+
+def enable_logging_to_file(app: Flask) -> None:
+    """Enable logging in log file.
+
+    Args:
+        app (Flask): application object
+    """
+
     if not os.path.exists("logs"):
         os.mkdir("logs")
 
     file_handler = RotatingFileHandler(
-        "logs/microblog.log",
-        maxBytes=10240,
-        backupCount=10
+        "logs/microblog.log", maxBytes=10240, backupCount=10
     )
     file_handler.setLevel(logging.INFO)
-    
+
     app.logger.addHandler(file_handler)
-
-
-if not app.debug:
-    if app.config["MAIL_SERVER"]:
-        enable_logging_to_mail()
-    enable_logging_to_file()

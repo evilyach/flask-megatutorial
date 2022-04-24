@@ -6,8 +6,12 @@ from werkzeug.urls import url_parse
 from app import db
 from app.auth import auth_bp
 from app.auth.email import send_password_reset_email
-from app.auth.forms import (LoginForm, RegistrationForm, ResetPasswordForm,
-                            ResetPasswordRequestForm)
+from app.auth.forms import (
+    LoginForm,
+    RegistrationForm,
+    ResetPasswordForm,
+    ResetPasswordRequestForm,
+)
 from app.models import User
 
 
@@ -73,7 +77,7 @@ def reset_password_request():
         user = User.query.filter_by(email=form.email.data).first()
 
         if user:
-            send_password_reset_email()
+            send_password_reset_email(user)
 
         flash(_("Check your email for the instructions to reset your password"))
         return redirect(url_for("auth.login"))

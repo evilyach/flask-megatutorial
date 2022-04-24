@@ -1,7 +1,6 @@
+from flask import current_app
 from flask_babel import _
 import requests
-
-from app import app
 
 
 def translate(text: str, source_language: str, target_language: str) -> str:
@@ -16,11 +15,11 @@ def translate(text: str, source_language: str, target_language: str) -> str:
         str: translated text
     """
 
-    token = app.config["YANDEX_TRANSLATE_TOKEN"]
+    token = current_app.config["YANDEX_TRANSLATE_TOKEN"]
     if token is None:
         return _("Yandex Translate Token is not set up")
 
-    folder_id = app.config["YANDEX_TRANSLATE_FOLDER_ID"]
+    folder_id = current_app.config["YANDEX_TRANSLATE_FOLDER_ID"]
     if folder_id is None:
         return _("Yandex Translate Folder ID is not set up")
 
